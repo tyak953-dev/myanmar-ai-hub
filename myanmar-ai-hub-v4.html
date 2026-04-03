@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>မြန်မာ AI Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0E1A;--bg2:#0F1525;--card:#161C2E;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--gold:#F5C842;--gold2:#E8A020;--gold-dim:rgba(245,200,66,.12);--cyan:#00D4FF;--purple:#8B5CF6;--green:#10B981;--red:#EF4444;--text:#F0F4FF;--text2:#8892A4;--text3:#5A6478;--font:'Outfit',sans-serif;--r:12px;--r2:18px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+button{font-family:var(--font);cursor:pointer;border:none}
+input,select,textarea{font-family:var(--font);outline:none}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--gold2);border-radius:2px}
+
+/* PAGES */
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.65rem 1.5rem;border-radius:var(--r);font-size:.9rem;font-weight:600;cursor:pointer;border:none;white-space:nowrap;transition:all .2s}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000}
+.btn-gold:hover{opacity:.9;transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--gold);border:1.5px solid var(--gold)}
+.btn-ghost{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(255,255,255,.12)}
+.btn-sm{padding:.4rem 1rem;font-size:.82rem}
+.btn-lg{padding:.85rem 2rem;font-size:1rem;border-radius:var(--r2)}
+.btn-full{width:100%}
+
+/* FORMS */
+.fg{margin-bottom:1rem}
+.fl{display:block;font-size:.82rem;font-weight:600;color:var(--text2);margin-bottom:.4rem}
+.fi{width:100%;padding:.7rem 1rem;border-radius:var(--r);border:1.5px solid var(--border2);font-size:.92rem;color:var(--text);background:var(--bg2);transition:all .2s}
+.fi:focus{border-color:var(--gold)}
+.fi::placeholder{color:var(--text3)}
+select.fi option{background:var(--bg2)}
+textarea.fi{resize:vertical;min-height:90px}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{display:flex;align-items:center;gap:.6rem;cursor:pointer;font-weight:800;font-size:1.05rem}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#000}
+.logo-text{background:linear-gradient(135deg,var(--gold),#FFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-btns{display:flex;gap:.5rem}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 1.5rem 3rem;background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(245,200,66,.07),transparent 70%)}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--gold-dim);border:1px solid rgba(245,200,66,.3);color:var(--gold);padding:.35rem 1rem;border-radius:20px;font-size:.82rem;font-weight:700;margin-bottom:1.5rem}
+.hero h1{font-size:clamp(2rem,6vw,3.5rem);font-weight:900;line-height:1.15;margin-bottom:1.25rem}
+.hero h1 span{background:linear-gradient(135deg,var(--gold),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:1rem;color:var(--text2);max-width:560px;margin:0 auto 2rem;line-height:1.7}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
+.hero-stats{display:flex;gap:2.5rem;justify-content:center}
+.hs-num{font-size:1.6rem;font-weight:900;color:var(--gold)}
+.hs-lbl{font-size:.78rem;color:var(--text2)}
+
+/* TOOLS */
+.sec{padding:4rem 1.5rem;max-width:1100px;margin:0 auto}
+.sec-lbl{font-size:.72rem;font-weight:800;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.6rem}
+.sec-h{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;margin-bottom:1rem}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:2rem}
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1.5rem;cursor:pointer;transition:all .2s}
+.tool-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.tool-icon{width:48px;height:48px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:.9rem}
+.tool-title{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.tool-desc{font-size:.82rem;color:var(--text2);line-height:1.6}
+.badge{display:inline-flex;align-items:center;padding:.2rem .65rem;border-radius:20px;font-size:.7rem;font-weight:700;margin-bottom:.6rem}
+.badge-gold{background:var(--gold-dim);color:var(--gold)}
+.badge-purple{background:rgba(139,92,246,.15);color:var(--purple)}
+.badge-green{background:rgba(16,185,129,.12);color:var(--green)}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-top:2rem}
+.price-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r2);padding:1.75rem;position:relative;transition:all .2s}
+.price-card.featured{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 40px rgba(245,200,66,.1)}
+.price-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;padding:.3rem 1.1rem;border-radius:20px;font-size:.72rem;font-weight:800;white-space:nowrap}
+.price-tier{font-size:.75rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+.price-num{font-size:2rem;font-weight:900;line-height:1;margin-bottom:.2rem}
+.price-mmk{font-size:.78rem;color:var(--gold);margin-bottom:1.25rem}
+.price-features{list-style:none;margin-bottom:1.5rem}
+.price-features li{display:flex;gap:.6rem;font-size:.83rem;padding:.38rem 0;border-bottom:1px solid var(--border);color:var(--text2)}
+.price-features li:last-child{border:none}
+.price-features li.y{color:var(--text)}
+.price-features li.y::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+.price-features li.n::before{content:'✕';color:var(--text3);flex-shrink:0}
+
+/* DASHBOARD */
+.dash-layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sb{background:var(--bg2);border-right:1px solid var(--border);padding:1.25rem;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.sb-logo{display:flex;align-items:center;gap:.6rem;margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);cursor:pointer}
+.sb-lm{width:30px;height:30px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;color:#000}
+.sb-lt{font-size:.95rem;font-weight:800;background:linear-gradient(135deg,var(--gold),#FFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sb-sec{font-size:.65rem;font-weight:800;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;padding:.3rem .6rem;margin:.6rem 0 .15rem}
+.sb-a{display:flex;align-items:center;gap:.65rem;padding:.55rem .7rem;border-radius:var(--r);font-size:.84rem;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;margin-bottom:.1rem}
+.sb-a:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.sb-a.on{background:var(--gold-dim);color:var(--gold);font-weight:600}
+.sb-badge{margin-left:auto;background:var(--gold);color:#000;font-size:.62rem;font-weight:800;padding:.1rem .4rem;border-radius:8px}
+.sb-user{margin-top:auto;padding-top:1.25rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:.65rem;cursor:pointer}
+.sb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:#000;flex-shrink:0}
+
+.dash-main{background:var(--bg);padding:1.75rem;overflow-y:auto}
+.dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:gap}
+.dash-greet{font-size:1.3rem;font-weight:800}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:1.75rem}
+.stat-c{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1.1rem}
+.stat-lbl{font-size:.72rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
+.stat-val{font-size:1.5rem;font-weight:900}
+.stat-chg{font-size:.72rem;margin-top:.3rem;color:var(--green)}
+
+/* AI TOOL AREA */
+.tool-area{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.tool-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1.35rem}
+.panel-title{font-size:.75rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between}
+.out-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:1.1rem;min-height:200px;font-size:.86rem;line-height:1.75;color:var(--text);white-space:pre-wrap}
+.out-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--text3);font-size:.83rem;gap:.5rem;text-align:center}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TOAST */
+#toasts{position:fixed;bottom:1.25rem;right:1.25rem;z-index:9999;display:flex;flex-direction:column;gap:.4rem;pointer-events:none}
+.toast{background:var(--card);border:1px solid var(--border2);color:var(--text);padding:.75rem 1.1rem;border-radius:var(--r);font-size:.86rem;font-weight:500;display:flex;align-items:center;gap:.5rem;max-width:300px;animation:tIn .3s ease;pointer-events:auto}
+.toast.s{border-color:rgba(16,185,129,.4)}
+.toast.e{border-color:rgba(239,68,68,.4)}
+.toast.w{border-color:rgba(245,200,66,.4)}
+@keyframes tIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:all .2s}
+.modal-bg.open{opacity:1;pointer-events:auto}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--r2);padding:1.75rem;width:90%;max-width:480px;max-height:90vh;overflow-y:auto;transform:scale(.95);transition:all .2s}
+.modal-bg.open .modal{transform:scale(1)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.35rem}
+.modal-title{font-size:1.1rem;font-weight:700}
+.modal-x{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);cursor:pointer;color:var(--text2);font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-x:hover{background:rgba(255,255,255,.15)}
+
+/* PAY */
+.pay-opts{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin:1rem 0}
+.pay-opt{border:1.5px solid var(--border2);border-radius:var(--r);padding:.9rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg2)}
+.pay-opt.sel{border-color:var(--gold);background:var(--gold-dim)}
+.pay-ico{font-size:1.3rem;margin-bottom:.3rem}
+.pay-name{font-size:.83rem;font-weight:700}
+.pay-sub{font-size:.7rem;color:var(--text2)}
+
+/* MISC */
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.1rem 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border2)}
+.divider span{font-size:.78rem;color:var(--text3)}
+.auth-tabs{display:flex;background:var(--bg2);border-radius:var(--r);padding:.2rem;margin-bottom:1.5rem;border:1px solid var(--border)}
+.auth-tab{flex:1;text-align:center;padding:.55rem;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;color:var(--text2);transition:all .2s}
+.auth-tab.on{background:var(--gold-dim);color:var(--gold)}
+.filter-bar{display:flex;gap:.5rem;margin-bottom:1.35rem;flex-wrap:wrap}
+.pill{padding:.38rem .95rem;border-radius:20px;font-size:.8rem;font-weight:600;border:1px solid var(--border2);background:transparent;cursor:pointer;transition:all .2s;color:var(--text2)}
+.pill:hover{border-color:var(--gold);color:var(--gold)}
+.pill.on{background:var(--gold-dim);color:var(--gold);border-color:rgba(245,200,66,.4)}
+.learn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.learn-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;cursor:pointer;transition:all .2s}
+.learn-card:hover{transform:translateY(-2px);border-color:var(--border2)}
+.learn-thumb{height:130px;display:flex;align-items:center;justify-content:center;font-size:3rem}
+.learn-body{padding:1rem}
+.learn-cat{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.35rem;color:var(--gold)}
+.learn-title{font-size:.9rem;font-weight:700;margin-bottom:.35rem;line-height:1.4}
+.learn-meta{font-size:.75rem;color:var(--text2)}
+.prog-wrap{display:flex;align-items:center;gap:.65rem;margin-top:.6rem}
+.prog-bar{flex:1;height:4px;background:var(--border2);border-radius:2px}
+.prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1.35rem}
+@media(max-width:768px){.dash-layout{grid-template-columns:1fr}.sb{display:none}.stats-row{grid-template-columns:repeat(2,1fr)}.tool-area{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-bg" id="payModal">
+<div class="modal">
+  <div class="modal-hdr"><div class="modal-title">⭐ Pro Membership ဝယ်ယူမည်</div><button class="modal-x" onclick="closeModal('payModal')">✕</button></div>
+  <div style="background:var(--gold-dim);border:1px solid rgba(245,200,66,.3);border-radius:var(--r);padding:1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
+    <div><div style="font-weight:700;font-size:.92rem">မြန်မာ AI Hub — Pro</div><div style="font-size:.78rem;color:var(--text2);margin-top:.2rem">AI Tools အားလုံး + Learning + Updates</div></div>
+    <div style="text-align:right"><div style="font-size:1.3rem;font-weight:900;color:var(--gold)">9,900</div><div style="font-size:.72rem;color:var(--text2)">MMK/လ</div></div>
+  </div>
+  <div style="font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:.5rem">Payment Method</div>
+  <div class="pay-opts">
+    <div class="pay-opt sel" onclick="selPay(this)"><div class="pay-ico">💳</div><div class="pay-name">KBZPay</div><div class="pay-sub">09xxx ဆင်ဆင်</div></div>
+    <div class="pay-opt" onclick="selPay(this)"><div class="pay-ico">🌊</div><div class="pay-name">Wave Money</div><div class="pay-sub">Wave account</div></div>
+    <div class="pay-opt" onclick="selPay(this)"><div class="pay-ico">🏦</div><div class="pay-name">AYAPay</div><div class="pay-sub">AYA bank</div></div>
+    <div class="pay-opt" onclick="selPay(this)"><div class="pay-ico">🏛️</div><div class="pay-name">CB Pay</div><div class="pay-sub">CB bank</div></div>
+  </div>
+  <div class="fg"><label class="fl">Phone Number</label><input class="fi" type="tel" placeholder="09xxxxxxxxx"></div>
+  <button class="btn btn-gold btn-full btn-lg" onclick="doPayment()" id="payBtn">💳 ငွေပေးချေမည် — 9,900 MMK</button>
+  <div style="text-align:center;font-size:.72rem;color:var(--text3);margin-top:.6rem">🔒 လုံခြုံစိတ်ချရသည် · Cancel anytime · 7-day refund</div>
+</div>
+</div>
+
+<!-- ═══ LANDING ═══ -->
+<div class="page active" id="page-home">
+<nav class="nav">
+  <div class="logo" onclick="goTo('home')"><div class="logo-mark">AI</div><div class="logo-text">မြန်မာ AI Hub</div></div>
+  <div class="nav-btns">
+    <button class="btn btn-ghost btn-sm" onclick="goTo('auth')">Login</button>
+    <button class="btn btn-gold btn-sm" onclick="goTo('auth')">စတင်မည်</button>
+  </div>
+</nav>
+<section class="hero">
+  <div class="hero-badge">🇲🇲 မြန်မာ #1 AI Platform — 2024</div>
+  <h1>AI နဲ့ <span>ဘာမဆို</span> လုပ်နိုင်တယ်<br>မြန်မာဘာသာနဲ့ပဲ</h1>
+  <p>AI Prompts · Movie Recap · မြန်မာ Voice · Image Enhance · Social Strategy · Slide Maker · Graphic Design · Video Editing — အကုန်တစ်နေရာမှာ</p>
+  <div class="hero-btns">
+    <button class="btn btn-gold btn-lg" onclick="goTo('auth')">🚀 အခမဲ့ စတင်မည်</button>
+    <button class="btn btn-ghost btn-lg" id="demoBtn">🎯 Demo ကြည့်မည်</button>
+  </div>
+  <div class="hero-stats">
+    <div style="text-align:center"><div class="hs-num">18K+</div><div class="hs-lbl">Active Users</div></div>
+    <div style="text-align:center"><div class="hs-num">8</div><div class="hs-lbl">AI Tools</div></div>
+    <div style="text-align:center"><div class="hs-num">60+</div><div class="hs-lbl">Free Lessons</div></div>
+    <div style="text-align:center"><div class="hs-num">98%</div><div class="hs-lbl">Satisfaction</div></div>
+  </div>
+</section>
+
+<div style="background:var(--bg2);padding:4rem 1.5rem">
+<div style="max-width:1100px;margin:0 auto">
+  <div class="sec-lbl">🤖 AI Tools</div>
+  <h2 class="sec-h">တစ်ကလစ်နဲ့ Professional results</h2>
+  <div class="tools-grid">
+    <div class="tool-card" onclick="goTo('auth')"><div class="badge badge-gold">FREE</div><div class="tool-icon" style="background:var(--gold-dim)">✨</div><div class="tool-title">AI Prompt Generator</div><div class="tool-desc">မြန်မာ idea → ChatGPT/Claude/Midjourney professional prompts</div></div>
+    <div class="tool-card" onclick="goTo('auth')"><div class="badge badge-gold">FREE</div><div class="tool-icon" style="background:rgba(0,212,255,.1)">🎬</div><div class="tool-title">Movie Recap Storyteller</div><div class="tool-desc">ရုပ်ရှင် title → မြန်မာ engaging story recap Facebook/TikTok</div></div>
+    <div class="tool-card" onclick="goTo('auth')"><div class="badge badge-purple">PRO</div><div class="tool-icon" style="background:rgba(139,92,246,.1)">🔊</div><div class="tool-title">Myanmar Voice Converter</div><div class="tool-desc">Text → Myanmar AI voice audio file</div></div>
+    <div class="tool-card" onclick="goTo('auth')"><div class="badge badge-purple">PRO</div><div class="tool-icon" style="background:var(--gold-dim)">🖼️</div><div class="tool-title">AI Image Enhancer</div><div class="tool-desc">ပုံ upload → quality မြင့်တင်, background remove</div></div>
+    <div class="tool-card" onclick="goTo('auth')"><div class="badge badge-green">PRO</div><div class="tool-icon" style="background:rgba(16,185,129,.1)">📱</div><div class="tool-title">Social Media Strategy AI</div><div class="tool-desc">Business → 30-day content calendar + captions auto-generate</div></div>
+    <div class="tool-card" onclick="goTo('auth')"><div class="badge badge-purple">PRO</div><div class="tool-icon" style="background:rgba(0,212,255,.1)">📊</div><div class="tool-title">AI Slide Maker</div><div class="tool-desc">Topic → presentation structure + content generate</div></div>
+  </div>
+</div>
+</div>
+
+<div style="padding:4rem 1.5rem">
+<div style="max-width:1100px;margin:0 auto;text-align:center">
+  <div class="sec-lbl">💎 Pricing</div>
+  <h2 class="sec-h">ကော်ဖီ ၁၀ ခွက်ဖိုး — AI Power ရမယ်</h2>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Free</div>
+      <div class="price-num">0 <span style="font-size:.9rem;font-weight:400;color:var(--text2)">MMK</span></div>
+      <div class="price-mmk">Forever Free</div>
+      <ul class="price-features">
+        <li class="y">AI Prompt Generator</li><li class="y">Movie Recap (5/day)</li>
+        <li class="y">Free Courses (3)</li><li class="n">Voice Converter</li>
+        <li class="n">Image Enhancer</li><li class="n">Social Strategy AI</li>
+      </ul>
+      <button class="btn btn-ghost btn-full" onclick="goTo('auth')">အခမဲ့ စတင်</button>
+    </div>
+    <div class="price-card featured">
+      <div class="price-badge">⭐ Most Popular</div>
+      <div class="price-tier">Pro</div>
+      <div class="price-num">9,900 <span style="font-size:.9rem;font-weight:400;color:var(--text2)">MMK/လ</span></div>
+      <div class="price-mmk">Founding Price — ပုံမှန် 19,900 MMK</div>
+      <ul class="price-features">
+        <li class="y">AI Tools အားလုံး Unlimited</li><li class="y">Voice Converter</li>
+        <li class="y">Image Enhancer</li><li class="y">Social Strategy AI</li>
+        <li class="y">Slide Maker</li><li class="y">Courses 60+ အားလုံး</li>
+      </ul>
+      <button class="btn btn-gold btn-full" onclick="openModal('payModal')">Pro ဝင်ယူမည်</button>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Business</div>
+      <div class="price-num">49,900 <span style="font-size:.9rem;font-weight:400;color:var(--text2)">MMK/လ</span></div>
+      <div class="price-mmk">Team 5 + White-label</div>
+      <ul class="price-features">
+        <li class="y">Pro features အားလုံး</li><li class="y">Team 5 accounts</li>
+        <li class="y">Analytics dashboard</li><li class="y">API access</li>
+        <li class="y">White-label</li><li class="y">Dedicated support</li>
+      </ul>
+      <button class="btn btn-ghost btn-full" onclick="toast('Sales team ဆက်သွယ်မည်','w')">Sales ဆက်သွယ်</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div style="background:var(--bg2);border-top:1px solid var(--border);padding:3rem 1.5rem;text-align:center">
+  <div style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:900;margin-bottom:.75rem">AI Revolution မှာ ပါဝင်ပါ 🚀</div>
+  <div style="font-size:.92rem;color:var(--text2);margin-bottom:1.75rem">Founding members 50 ဦးသာ — ပြီးရင် price တက်မည်</div>
+  <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+    <button class="btn btn-gold btn-lg" onclick="goTo('auth')">🚀 အခမဲ့ Account ဖွင့်</button>
+    <button class="btn btn-ghost btn-lg" onclick="openModal('payModal')">⭐ Pro 9,900 MMK/လ</button>
+  </div>
+</div>
+<div style="background:var(--bg2);border-top:1px solid var(--border);padding:1.5rem;text-align:center;font-size:.78rem;color:var(--text3)">© 2024 မြန်မာ AI Hub · KBZPay · Wave · AYAPay · CBPay</div>
+</div>
+
+<!-- LESSON MODAL -->
+<div class="modal-bg" id="lessonModal">
+<div class="modal" style="max-width:620px">
+  <div class="modal-hdr"><div class="modal-title" id="lessonTitle">Lesson</div><button class="modal-x" onclick="closeModal('lessonModal')">✕</button></div>
+  <div style="background:var(--bg2);border-radius:var(--r);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;border:1px solid var(--border2);margin-bottom:1rem">
+    <div style="font-size:3rem">🎬</div>
+    <div style="font-size:.88rem;color:var(--text2);text-align:center">Video player — Production မှာ real video ထည့်ပါ</div>
+    <button class="btn btn-gold btn-sm" onclick="toast('Video playing...','s')">▶ Play</button>
+  </div>
+  <div id="lessonDesc" style="font-size:.86rem;color:var(--text2);line-height:1.7;margin-bottom:1rem"></div>
+  <div style="display:flex;gap:.65rem">
+    <button class="btn btn-gold" onclick="toast('✅ Lesson completed!','s');closeModal('lessonModal')">✅ Complete လုပ်မည်</button>
+    <button class="btn btn-ghost" onclick="closeModal('lessonModal')">နောက်မှ</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══ AUTH ═══ -->
+<div class="page" id="page-auth">
+<div style="min-height:100vh;display:grid;grid-template-columns:1fr 1fr">
+  <div style="background:linear-gradient(150deg,var(--bg2),#141929);border-right:1px solid var(--border);padding:2.5rem;display:flex;flex-direction:column;justify-content:center">
+    <div class="logo" onclick="goTo('home')" style="margin-bottom:2rem"><div class="logo-mark">AI</div><div class="logo-text">မြန်မာ AI Hub</div></div>
+    <h2 style="font-size:1.75rem;font-weight:900;margin-bottom:.75rem">AI Tools + Learning<br><span style="color:var(--gold)">တစ်နေရာမှာပဲ</span></h2>
+    <p style="color:var(--text2);font-size:.88rem;line-height:1.7;margin-bottom:1.5rem">မြန်မာ creators အတွက် AI tools 8+ နှင့် professional courses</p>
+    <div style="display:flex;flex-direction:column;gap:.55rem">
+      <div style="display:flex;align-items:center;gap:.65rem;font-size:.85rem;color:var(--text2)"><span style="width:28px;height:28px;background:var(--gold-dim);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">✨</span>AI Prompt Generator</div>
+      <div style="display:flex;align-items:center;gap:.65rem;font-size:.85rem;color:var(--text2)"><span style="width:28px;height:28px;background:var(--gold-dim);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">🎬</span>Movie Recap Storyteller</div>
+      <div style="display:flex;align-items:center;gap:.65rem;font-size:.85rem;color:var(--text2)"><span style="width:28px;height:28px;background:var(--gold-dim);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">📱</span>Social Media Strategy AI</div>
+      <div style="display:flex;align-items:center;gap:.65rem;font-size:.85rem;color:var(--text2)"><span style="width:28px;height:28px;background:var(--gold-dim);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">💳</span>KBZPay / Wave Money</div>
+    </div>
+  </div>
+  <div style="padding:2.5rem;display:flex;flex-direction:column;justify-content:center">
+    <div style="max-width:380px;margin:0 auto;width:100%">
+      <div class="logo" onclick="goTo('home')" style="margin-bottom:1.75rem"><div class="logo-mark">AI</div><div class="logo-text">မြန်မာ AI Hub</div></div>
+      <div class="auth-tabs">
+        <div class="auth-tab on" id="tab-login" onclick="authTab('login')">Login</div>
+        <div class="auth-tab" id="tab-reg" onclick="authTab('reg')">Register</div>
+      </div>
+      <div id="auth-login">
+        <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="loginEmail" placeholder="your@email.com"></div>
+        <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="loginPw" placeholder="••••••••"></div>
+        <button class="btn btn-gold btn-full btn-lg" style="margin-bottom:.75rem" onclick="doLogin()">Login မည်</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.75rem">
+          <button class="btn btn-ghost btn-sm" onclick="quickLogin('demo')">🎯 User Demo</button>
+          <button class="btn btn-ghost btn-sm" onclick="quickLogin('admin')">🔧 Admin Demo</button>
+        </div>
+        <div style="text-align:center;font-size:.75rem;color:var(--text3)">Demo buttons နှိပ်ပြီး ချက်ချင်း ဝင်ကြည့်နိုင်</div>
+      </div>
+      <div id="auth-reg" style="display:none">
+        <div class="fg"><label class="fl">နာမည်</label><input class="fi" id="regName" placeholder="မသင်းသင်း"></div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="regEmail" placeholder="your@email.com"></div>
+        <div class="fg"><label class="fl">Phone</label><input class="fi" type="tel" id="regPhone" placeholder="09xxxxxxxxx"></div>
+        <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="regPw" placeholder="min 8 chars"></div>
+        <button class="btn btn-gold btn-full btn-lg" onclick="doReg()">Account ဖွင့်မည်</button>
+      </div>
+      <div class="divider"><span>သို့မဟုတ်</span></div>
+      <button class="btn btn-ghost btn-full" onclick="toast('Facebook Login coming!','w')">📘 Facebook နဲ့ Login</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="page" id="page-dash">
+<div class="dash-layout">
+  <aside class="sb">
+    <div class="sb-logo" onclick="goTo('home')"><div class="sb-lm">AI</div><div class="sb-lt">မြန်မာ AI Hub</div></div>
+    <div class="sb-sec">Main</div>
+    <div class="sb-a on" onclick="showDS('overview',this)">🏠 Overview</div>
+    <div class="sb-sec">🤖 AI Tools</div>
+    <div class="sb-a" onclick="showDS('prompt',this)">✨ Prompt Generator</div>
+    <div class="sb-a" onclick="showDS('recap',this)">🎬 Movie Recap</div>
+    <div class="sb-a" onclick="showDS('voice',this)">🔊 Voice Converter <span class="sb-badge">PRO</span></div>
+    <div class="sb-a" onclick="showDS('social',this)">📱 Social Strategy <span class="sb-badge">PRO</span></div>
+    <div class="sb-a" onclick="showDS('slide',this)">📊 Slide Maker <span class="sb-badge">PRO</span></div>
+    <div class="sb-sec">📚 Learning</div>
+    <div class="sb-a" onclick="showDS('learn',this)">📚 My Courses</div>
+    <div class="sb-sec">Account</div>
+    <div class="sb-a" onclick="showDS('membership',this)">⭐ Membership</div>
+    <div class="sb-a" onclick="showDS('settings',this)">⚙️ Settings</div>
+    <div class="sb-user" onclick="showDS('settings',this)">
+      <div class="sb-av" id="sbAv">U</div>
+      <div><div style="font-size:.84rem;font-weight:700" id="sbName">User</div><div style="font-size:.7rem;color:var(--text3)" id="sbRole">Free</div></div>
+    </div>
+  </aside>
+  <main class="dash-main">
+    <div class="dash-top">
+      <div><div class="dash-greet" id="dGreet">မင်္ဂလာပါ 👋</div><div style="font-size:.8rem;color:var(--text2);margin-top:.2rem" id="dDate"></div></div>
+      <button class="btn btn-gold btn-sm" onclick="openModal('payModal')" id="upgradeBtn">⭐ Pro — 9,900 MMK</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="ds-overview">
+      <div class="stats-row">
+        <div class="stat-c"><div class="stat-lbl">AI Queries</div><div class="stat-val">47</div><div class="stat-chg">↑ 12 today</div></div>
+        <div class="stat-c"><div class="stat-lbl">Courses</div><div class="stat-val">3</div><div class="stat-chg" style="color:var(--text2)">2 in progress</div></div>
+        <div class="stat-c"><div class="stat-lbl">Content</div><div class="stat-val">18</div><div class="stat-chg">↑ 5 this week</div></div>
+        <div class="stat-c"><div class="stat-lbl">Membership</div><div class="stat-val" id="memStat" style="font-size:1rem;margin-top:.3rem">Free</div><div class="stat-chg" style="margin-top:.4rem"><button class="btn btn-gold btn-sm" onclick="openModal('payModal')">Upgrade</button></div></div>
+      </div>
+      <div class="card" style="margin-bottom:1.25rem">
+        <div style="font-size:.88rem;font-weight:700;margin-bottom:1rem">⚡ Quick Access</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem">
+          <button class="btn btn-ghost" onclick="showDS('prompt')" style="flex-direction:column;gap:.3rem;padding:.75rem;height:auto"><span style="font-size:1.2rem">✨</span><span style="font-size:.75rem">Prompt Gen</span></button>
+          <button class="btn btn-ghost" onclick="showDS('recap')" style="flex-direction:column;gap:.3rem;padding:.75rem;height:auto"><span style="font-size:1.2rem">🎬</span><span style="font-size:.75rem">Movie Recap</span></button>
+          <button class="btn btn-ghost" onclick="showDS('social')" style="flex-direction:column;gap:.3rem;padding:.75rem;height:auto"><span style="font-size:1.2rem">📱</span><span style="font-size:.75rem">Social AI</span></button>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:.88rem;font-weight:700;margin-bottom:.75rem">🔥 Daily Update</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem">
+          <div style="background:var(--bg2);border-radius:var(--r);padding:.85rem;border:1px solid var(--border)"><div style="font-size:.68rem;font-weight:800;color:var(--gold);text-transform:uppercase;margin-bottom:.35rem">New Prompt</div><div style="font-size:.78rem;color:var(--text2)">Product Photography pack — Shopee listings</div></div>
+          <div style="background:var(--bg2);border-radius:var(--r);padding:.85rem;border:1px solid var(--border)"><div style="font-size:.68rem;font-weight:800;color:var(--cyan);text-transform:uppercase;margin-bottom:.35rem">AI Tip</div><div style="font-size:.78rem;color:var(--text2)">Claude System Prompt trick — Myanmar</div></div>
+          <div style="background:var(--bg2);border-radius:var(--r);padding:.85rem;border:1px solid var(--border)"><div style="font-size:.68rem;font-weight:800;color:var(--purple);text-transform:uppercase;margin-bottom:.35rem">Trending</div><div style="font-size:.78rem;color:var(--text2)">FB page viral content format 2024</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROMPT GEN -->
+    <div id="ds-prompt" style="display:none">
+      <div style="margin-bottom:1.35rem"><div style="font-size:1.1rem;font-weight:800;margin-bottom:.3rem">✨ AI Prompt Generator <span class="badge badge-gold" style="vertical-align:middle">FREE</span></div><div style="font-size:.83rem;color:var(--text2)">မြန်မာ idea → ChatGPT/Claude/Midjourney professional prompts</div></div>
+      <div class="tool-area">
+        <div class="tool-panel">
+          <div class="panel-title">Input</div>
+          <div class="fg"><label class="fl">Platform</label><select class="fi" id="pPlatform"><option>ChatGPT / Claude</option><option>Midjourney</option><option>DALL-E</option></select></div>
+          <div class="fg"><label class="fl">Purpose</label><select class="fi" id="pPurpose"><option>Content Writing</option><option>Image Generation</option><option>Marketing Copy</option><option>Story Writing</option></select></div>
+          <div class="fg"><label class="fl">မင်း idea (မြန်မာ/English)</label><textarea class="fi" id="pIdea" placeholder="ဥပမာ: မြန်မာ မိသားစု restaurant အတွက် FB ad ရေးချင်တယ်" rows="4"></textarea></div>
+          <div class="fg"><label class="fl">Tone</label><select class="fi" id="pTone"><option>Professional</option><option>Casual</option><option>Persuasive</option><option>Creative</option></select></div>
+          <button class="btn btn-gold btn-full" onclick="runPrompt()" id="promptBtn">✨ Generate မည်</button>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.65rem">
+            <button class="btn btn-ghost btn-sm" onclick="fillEx('Restaurant Ad')">Restaurant</button>
+            <button class="btn btn-ghost btn-sm" onclick="fillEx('Travel Blog')">Travel</button>
+            <button class="btn btn-ghost btn-sm" onclick="fillEx('Product')">Product</button>
+          </div>
+        </div>
+        <div class="tool-panel">
+          <div class="panel-title">Output <button class="btn btn-ghost btn-sm" onclick="copyOut('pOut')">📋 Copy</button></div>
+          <div class="out-box" id="pOut"><div class="out-placeholder"><span style="font-size:1.8rem">✨</span><span>Generate နှိပ်ပါ</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECAP -->
+    <div id="ds-recap" style="display:none">
+      <div style="margin-bottom:1.35rem"><div style="font-size:1.1rem;font-weight:800;margin-bottom:.3rem">🎬 Movie Recap Storyteller <span class="badge badge-gold" style="vertical-align:middle">FREE</span></div><div style="font-size:.83rem;color:var(--text2)">ရုပ်ရှင် title → မြန်မာ FB/TikTok engaging story</div></div>
+      <div class="tool-area">
+        <div class="tool-panel">
+          <div class="panel-title">Movie Info</div>
+          <div class="fg"><label class="fl">ရုပ်ရှင် Title</label><input class="fi" id="rTitle" placeholder="Interstellar, Avatar, Oppenheimer..."></div>
+          <div class="fg"><label class="fl">Genre</label><select class="fi" id="rGenre"><option>Action/Thriller</option><option>Romance/Drama</option><option>Sci-Fi</option><option>Horror</option><option>Animation</option></select></div>
+          <div class="fg"><label class="fl">Style</label><select class="fi" id="rStyle"><option>Facebook Story (emotional, shareable)</option><option>TikTok Hook (fast, viral)</option><option>Blog Review (detailed)</option></select></div>
+          <div class="fg"><label class="fl">Notes (optional)</label><textarea class="fi" id="rNotes" placeholder="Spoiler မပါနဲ့ / ending explain လုပ်ပါ" rows="2"></textarea></div>
+          <button class="btn btn-gold btn-full" onclick="runRecap()" id="recapBtn">🎬 Generate မည်</button>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.65rem">
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('rTitle').value='Interstellar'">Interstellar</button>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('rTitle').value='Avengers Endgame'">Avengers</button>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('rTitle').value='Titanic'">Titanic</button>
+          </div>
+        </div>
+        <div class="tool-panel">
+          <div class="panel-title">Myanmar Recap <button class="btn btn-ghost btn-sm" onclick="copyOut('rOut')">📋 Copy</button></div>
+          <div class="out-box" id="rOut"><div class="out-placeholder"><span style="font-size:1.8rem">🎬</span><span>Movie title ထည့်ပြီး Generate နှိပ်ပါ</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOICE (PRO) -->
+    <div id="ds-voice" style="display:none">
+      <div style="margin-bottom:1.35rem"><div style="font-size:1.1rem;font-weight:800">🔊 Voice Converter <span class="badge badge-purple" style="vertical-align:middle">PRO</span></div></div>
+      <div id="voiceGate" style="background:var(--card);border:1px solid rgba(245,200,66,.2);border-radius:var(--r2);padding:2.5rem;text-align:center;max-width:440px">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">🔊</div>
+        <div style="font-weight:800;font-size:1rem;margin-bottom:.5rem">Myanmar Voice Converter</div>
+        <div style="font-size:.83rem;color:var(--text2);margin-bottom:1.25rem;line-height:1.65">Text → realistic Myanmar AI voice.<br>Podcast, YouTube narration perfect</div>
+        <button class="btn btn-gold btn-full btn-lg" onclick="openModal('payModal')">⭐ Pro — 9,900 MMK/လ</button>
+      </div>
+    </div>
+
+    <!-- SOCIAL (PRO) -->
+    <div id="ds-social" style="display:none">
+      <div style="margin-bottom:1.35rem"><div style="font-size:1.1rem;font-weight:800">📱 Social Strategy AI <span class="badge badge-purple" style="vertical-align:middle">PRO</span></div><div style="font-size:.83rem;color:var(--text2)">Business → 30-day content calendar + captions</div></div>
+      <div id="socialGate" style="background:var(--card);border:1px solid rgba(245,200,66,.2);border-radius:var(--r2);padding:2.5rem;text-align:center;max-width:440px">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">📱</div>
+        <div style="font-weight:800;font-size:1rem;margin-bottom:.5rem">Social Media Auto-Strategy</div>
+        <div style="font-size:.83rem;color:var(--text2);margin-bottom:1.25rem">Facebook, Instagram, TikTok 30-day calendar auto-generate</div>
+        <button class="btn btn-gold btn-full btn-lg" onclick="openModal('payModal')">⭐ Pro — 9,900 MMK/လ</button>
+      </div>
+      <div id="socialTool" style="display:none">
+        <div class="tool-area">
+          <div class="tool-panel">
+            <div class="fg"><label class="fl">Business Type</label><input class="fi" id="sBiz" placeholder="မြန်မာ restaurant, fashion shop..."></div>
+            <div class="fg"><label class="fl">Target Audience</label><input class="fi" id="sAud" placeholder="မြန်မာ အမျိုးသမီး ၂၅-၄၅"></div>
+            <div class="fg"><label class="fl">Platform</label><select class="fi" id="sPlatform"><option>Facebook</option><option>Instagram</option><option>TikTok</option><option>All platforms</option></select></div>
+            <button class="btn btn-gold btn-full" onclick="runSocial()">📱 Generate မည်</button>
+          </div>
+          <div class="tool-panel"><div class="panel-title">30-Day Strategy <button class="btn btn-ghost btn-sm" onclick="copyOut('sOut')">📋 Copy</button></div><div class="out-box" id="sOut"><div class="out-placeholder"><span style="font-size:1.8rem">📱</span><span>Info ထည့်ပြီး Generate ပါ</span></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE (PRO) -->
+    <div id="ds-slide" style="display:none">
+      <div style="margin-bottom:1.35rem"><div style="font-size:1.1rem;font-weight:800">📊 Slide Maker <span class="badge badge-purple" style="vertical-align:middle">PRO</span></div></div>
+      <div style="background:var(--card);border:1px solid rgba(245,200,66,.2);border-radius:var(--r2);padding:2.5rem;text-align:center;max-width:440px">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">📊</div>
+        <div style="font-weight:800;font-size:1rem;margin-bottom:.5rem">AI Presentation Maker</div>
+        <div style="font-size:.83rem;color:var(--text2);margin-bottom:1.25rem">Topic → slide structure + content generate</div>
+        <button class="btn btn-gold btn-full btn-lg" onclick="openModal('payModal')">⭐ Pro — 9,900 MMK/လ</button>
+      </div>
+    </div>
+
+    <!-- LEARN -->
+    <div id="ds-learn" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+        <h2 style="font-size:1.1rem;font-weight:800">📚 Courses</h2>
+      </div>
+      <div class="filter-bar">
+        <span class="pill on" onclick="filterLearn(this,'all')">All</span>
+        <span class="pill" onclick="filterLearn(this,'design')">🎨 Design</span>
+        <span class="pill" onclick="filterLearn(this,'video')">🎬 Video</span>
+        <span class="pill" onclick="filterLearn(this,'ai')">🤖 AI</span>
+        <span class="pill" onclick="filterLearn(this,'marketing')">📱 Marketing</span>
+        <span class="pill" onclick="filterLearn(this,'design')">📷 Photo</span>
+      </div>
+      <div class="learn-grid">
+        <div class="learn-card" data-cat="design" onclick="openLesson('Graphic Design Basics','Canva မှ Photoshop ထိ — မြန်မာ Graphic Designer ဖြစ်ချင်သူများအတွက် complete guide')">
+          <div class="learn-thumb" style="background:linear-gradient(135deg,#1a0a2e,#2d1b69)">🎨</div>
+          <div class="learn-body"><div class="learn-cat">Graphic Design</div><div class="learn-title">Canva မှ Photoshop — မြန်မာ guide</div><div class="learn-meta">📹 12 lessons · ⏱️ 4.5 hrs · <span style="color:var(--green)">Free</span></div><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:42%"></div></div><span style="font-size:.75rem;font-weight:700;color:var(--gold)">42%</span></div></div>
+        </div>
+        <div class="learn-card" data-cat="video" onclick="openLesson('Video Editing Complete','CapCut (phone) မှ Premiere Pro (PC) ထိ — မြန်မာ video creator များအတွက်')">
+          <div class="learn-thumb" style="background:linear-gradient(135deg,#0a1a2e,#0d3069)">🎬</div>
+          <div class="learn-body"><div class="learn-cat">Video Editing</div><div class="learn-title">CapCut မှ Premiere Pro — မြန်မာ guide</div><div class="learn-meta">📹 15 lessons · ⏱️ 6 hrs · <span style="color:var(--green)">Free</span></div><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:20%"></div></div><span style="font-size:.75rem;font-weight:700;color:var(--gold)">20%</span></div></div>
+        </div>
+        <div class="learn-card" data-cat="ai" onclick="openLesson('AI Usage Guide','ChatGPT, Claude, Gemini, Midjourney — မြန်မာလို အဆင့်ဆင့် လမ်းညွှန်')">
+          <div class="learn-thumb" style="background:linear-gradient(135deg,#0a2e1a,#0d6933)">🤖</div>
+          <div class="learn-body"><div class="learn-cat">AI Usage</div><div class="learn-title">AI ကိုဘယ်လိုသုံးရမလဲ — အဆင့်ဆင့်</div><div class="learn-meta">📹 10 lessons · ⏱️ 3 hrs · <span style="color:var(--green)">Free</span></div><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div><span style="font-size:.75rem;font-weight:700;color:var(--gold)">0%</span></div></div>
+        </div>
+        <div class="learn-card" data-cat="design" onclick="openLesson('Logo Design','Adobe Illustrator နဲ့ Canva ကနေ professional logo ဆွဲနည်း')">
+          <div class="learn-thumb" style="background:linear-gradient(135deg,#2e0a2e,#6d0d6d)">✏️</div>
+          <div class="learn-body"><div class="learn-cat">Graphic Design</div><div class="learn-title">Logo Design Basics — Illustrator</div><div class="learn-meta">📹 9 lessons · ⏱️ 3.5 hrs · <span style="color:var(--green)">Free</span></div><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div><span style="font-size:.75rem;font-weight:700;color:var(--gold)">0%</span></div></div>
+        </div>
+        <div class="learn-card" data-cat="video" onclick="openLesson('Short Video Mastery','TikTok နဲ့ Instagram Reels အတွက် viral short video ဆွဲနည်း')">
+          <div class="learn-thumb" style="background:linear-gradient(135deg,#2e0a1a,#6d0d3d)">📱</div>
+          <div class="learn-body"><div class="learn-cat">Video Editing</div><div class="learn-title">Short Video Mastery — TikTok/Reels</div><div class="learn-meta">📹 8 lessons · ⏱️ 2.5 hrs · <span style="color:var(--green)">Free</span></div><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div><span style="font-size:.75rem;font-weight:700;color:var(--gold)">0%</span></div></div>
+        </div>
+        <div class="learn-card" data-cat="ai" onclick="openLesson('Prompt Engineering','မြန်မာ Prompt Engineering — AI ကို ပိုကောင်းအောင် သုံးနည်း')">
+          <div class="learn-thumb" style="background:linear-gradient(135deg,#0a2e2e,#0d6969)">⚡</div>
+          <div class="learn-body"><div class="learn-cat">AI Usage</div><div class="learn-title">Prompt Engineering မြန်မာ</div><div class="learn-meta">📹 7 lessons · ⏱️ 2 hrs · <span style="color:var(--green)">Free</span></div><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div><span style="font-size:.75rem;font-weight:700;color:var(--gold)">0%</span></div></div>
+        </div>
+        <div class="learn-card" data-cat="marketing" onclick="openLesson('FB Page Growth','Myanmar Facebook Page ကို 10,000 followers ရောက်အောင် strategy')">
+          <div class="learn-thumb" style="background:linear-gradient(135deg,#2e1a0a,#693d0d)">📣</div>
+          <div class="learn-body"><div class="learn-cat">Marketing</div><div class="learn-title">Facebook Page Growth Strategy</div><div class="learn-meta">📹 8 lessons · ⏱️ 3 hrs · <span style="color:var(--gold)">Pro</span></div></div>
+        </div>
+        <div class="learn-card" data-cat="marketing" onclick="openLesson('Digital Marketing','Myanmar SME တွေအတွက် Digital Marketing complete guide')">
+          <div class="learn-thumb" style="background:linear-gradient(135deg,#1a2e0a,#3d690d)">📊</div>
+          <div class="learn-body"><div class="learn-cat">Marketing</div><div class="learn-title">Digital Marketing — Myanmar SME</div><div class="learn-meta">📹 12 lessons · ⏱️ 5 hrs · <span style="color:var(--gold)">Pro</span></div></div>
+        </div>
+        <div class="learn-card" data-cat="design" onclick="openLesson('Photography Basics','Smartphone တစ်ချောင်းနဲ့ professional photos ဆွဲနည်း')">
+          <div class="learn-thumb" style="background:linear-gradient(135deg,#0a1a2e,#1a3d6d)">📷</div>
+          <div class="learn-body"><div class="learn-cat">Photography</div><div class="learn-title">Smartphone Photography Pro</div><div class="learn-meta">📹 6 lessons · ⏱️ 2 hrs · <span style="color:var(--green)">Free</span></div><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:0%"></div></div><span style="font-size:.75rem;font-weight:700;color:var(--gold)">0%</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBERSHIP -->
+    <div id="ds-membership" style="display:none">
+      <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:1.25rem">⭐ Membership</h2>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between">
+        <div><div class="badge badge-gold" style="margin-bottom:.4rem">Free Plan</div><div style="font-weight:700">Free Member</div><div style="font-size:.8rem;color:var(--text2)">2 free AI tools · 3 courses</div></div>
+        <button class="btn btn-gold" onclick="openModal('payModal')">Upgrade မည်</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="ds-settings" style="display:none">
+      <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:1.25rem">⚙️ Settings</h2>
+      <div class="card" style="max-width:480px">
+        <div style="font-weight:700;margin-bottom:1rem">Profile</div>
+        <div class="fg"><label class="fl">Name</label><input class="fi" id="sName"></div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" id="sEmail" type="email"></div>
+        <div style="display:flex;gap:.65rem">
+          <button class="btn btn-gold" onclick="toast('Profile updated!','s')">Save</button>
+          <button class="btn btn-ghost" onclick="logout()">🚪 Logout</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<!-- ═══ ADMIN ═══ -->
+<div class="page" id="page-admin">
+<div class="dash-layout">
+  <aside class="sb">
+    <div class="sb-logo" onclick="goTo('home')"><div class="sb-lm">AI</div><div class="sb-lt">Admin Panel</div></div>
+    <div class="sb-sec">Analytics</div>
+    <div class="sb-a on" onclick="showAS('aov',this)">📊 Dashboard</div>
+    <div class="sb-a" onclick="showAS('ausers',this)">👥 Users</div>
+    <div class="sb-a" onclick="showAS('arev',this)">💰 Revenue</div>
+    <div class="sb-a" onclick="showAS('acontent',this)">📝 Daily Content</div>
+    <div class="sb-sec">System</div>
+    <div class="sb-a" onclick="showAS('asettings',this)">⚙️ Settings</div>
+    <div class="sb-user" onclick="logout()">
+      <div class="sb-av" style="background:linear-gradient(135deg,var(--gold),var(--gold2))">A</div>
+      <div><div style="font-size:.84rem;font-weight:700">Admin</div><div style="font-size:.7rem;color:var(--text3)">Logout</div></div>
+    </div>
+  </aside>
+  <main class="dash-main">
+    <div class="dash-top"><div><div class="dash-greet">Admin Dashboard 📊</div><div style="font-size:.8rem;color:var(--text2)" id="adminDate"></div></div><div style="display:flex;gap:.65rem"><button class="btn btn-ghost btn-sm" onclick="toast('Exported!','s')">⬇️ Export</button><button class="btn btn-gold btn-sm" onclick="showAS('acontent')">+ Daily Update</button></div></div>
+    <div id="aov">
+      <div class="stats-row">
+        <div class="stat-c"><div class="stat-lbl">Total Users</div><div class="stat-val">2,418</div><div class="stat-chg">↑ 234 this month</div></div>
+        <div class="stat-c"><div class="stat-lbl">Pro Members</div><div class="stat-val">312</div><div class="stat-chg">↑ 47 this week</div></div>
+        <div class="stat-c"><div class="stat-lbl">Revenue (MMK)</div><div class="stat-val">3.1M</div><div class="stat-chg">↑ 42% vs last</div></div>
+        <div class="stat-c"><div class="stat-lbl">AI Queries</div><div class="stat-val">4,821</div><div class="stat-chg">↑ 18% avg</div></div>
+      </div>
+      <div class="card"><div style="font-size:.88rem;font-weight:700;margin-bottom:1rem">Revenue — ၆ လ</div>
+        <div style="display:flex;align-items:flex-end;gap:.5rem;height:120px">
+          ${[30,48,52,70,85,100].map((h,i)=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.35rem"><div style="width:100%;border-radius:4px 4px 0 0;height:${h}%;background:${i===5?'linear-gradient(180deg,var(--gold),var(--gold2))':'rgba(245,200,66,.2)'}"></div><div style="font-size:.68rem;color:var(--text2)">${['Jul','Aug','Sep','Oct','Nov','Dec'][i]}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div id="ausers" style="display:none"><h2 style="font-size:1.1rem;font-weight:800;margin-bottom:1.25rem">👥 Users (2,418)</h2><div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden"><table style="width:100%;border-collapse:collapse"><thead style="background:var(--bg2)"><tr>${['User','Plan','Joined','Revenue'].map(h=>`<th style="padding:.65rem 1rem;text-align:left;font-size:.7rem;font-weight:800;color:var(--text2);text-transform:uppercase">${h}</th>`).join('')}</tr></thead><tbody>${[{n:'မသန်းပန်းဝင်း',p:'Pro',d:'Today',r:'9,900'},{n:'ကိုဇော်မင်း',p:'Free',d:'Today',r:'0'},{n:'မမြင့်မြတ်',p:'Business',d:'Yesterday',r:'49,900'},{n:'ကိုနေမင်း',p:'Pro',d:'Dec 28',r:'9,900'}].map(u=>`<tr style="border-top:1px solid var(--border)"><td style="padding:.75rem 1rem;font-size:.85rem;font-weight:600">${u.n}</td><td style="padding:.75rem 1rem"><span class="badge badge-gold">${u.p}</span></td><td style="padding:.75rem 1rem;font-size:.8rem;color:var(--text2)">${u.d}</td><td style="padding:.75rem 1rem;font-size:.85rem;font-weight:700;color:var(--gold)">${u.r}</td></tr>`).join('')}</tbody></table></div></div>
+    <div id="arev" style="display:none"><h2 style="font-size:1.1rem;font-weight:800;margin-bottom:1.25rem">💰 Revenue</h2><div class="stats-row"><div class="stat-c"><div class="stat-lbl">This Month</div><div class="stat-val" style="color:var(--gold)">3.1M</div><div class="stat-chg">MMK ↑ 42%</div></div><div class="stat-c"><div class="stat-lbl">Pro × 312</div><div class="stat-val">3.09M</div></div><div class="stat-c"><div class="stat-lbl">Business × 2</div><div class="stat-val">99.8K</div></div><div class="stat-c"><div class="stat-lbl">Annual Rate</div><div class="stat-val">37.2M</div></div></div></div>
+    <div id="acontent" style="display:none"><h2 style="font-size:1.1rem;font-weight:800;margin-bottom:1.25rem">📝 Daily Content</h2><div class="card" style="max-width:540px"><div class="fg"><label class="fl">AI Tip Title</label><input class="fi" placeholder="Claude system prompt trick..."></div><div class="fg"><label class="fl">Content</label><textarea class="fi" rows="3" placeholder="Actionable tip..."></textarea></div><div class="fg"><label class="fl">Prompt Pack</label><input class="fi" placeholder="Product Photography Pack"></div><button class="btn btn-gold" onclick="toast('Pushed to all users! 🚀','s')">🚀 Push to All Users</button></div></div>
+    <div id="asettings" style="display:none"><h2 style="font-size:1.1rem;font-weight:800;margin-bottom:1.25rem">⚙️ Settings</h2><div class="card" style="max-width:480px"><div class="fg"><label class="fl">Pro Price (MMK/mo)</label><input class="fi" value="9900" type="number"></div><div class="fg"><label class="fl">KBZPay Merchant ID</label><input class="fi" type="password" placeholder="KBZ_XXXX"></div><button class="btn btn-gold" onclick="toast('Saved!','s')">Save</button></div></div>
+  </main>
+</div>
+</div>
+
+<script>
+const GEMINI_KEY = "YOUR_GEMINI_KEY_HERE";
+const S = { user: null, isPro: false, isAdmin: false };
+
+// NAVIGATION
+function goTo(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const p = document.getElementById('page-' + id);
+  if (p) { p.classList.add('active'); window.scrollTo(0,0); }
+  if (id === 'dash') updateDash();
+  if (id === 'admin') { const el = document.getElementById('adminDate'); if(el) el.textContent = fmtDate(); }
+}
+
+// AUTH
+function authTab(t) {
+  ['login','reg'].forEach(x => {
+    const el = document.getElementById('auth-' + x);
+    const tab = document.getElementById('tab-' + x);
+    if(el) el.style.display = x === t ? 'block' : 'none';
+    if(tab) { tab.classList.toggle('on', x === t); }
+  });
+}
+
+function doLogin() {
+  const e = document.getElementById('loginEmail').value || 'user';
+  S.user = { name: e.includes('@') ? e.split('@')[0] : e, email: e };
+  S.isPro = false;
+  goTo('dash');
+  toast('Login ဝင်ပြီ! 🎉','s');
+}
+
+function doReg() {
+  const n = document.getElementById('regName').value || 'User';
+  const e = document.getElementById('regEmail').value || 'user@email.com';
+  S.user = { name: n, email: e };
+  S.isPro = false;
+  goTo('dash');
+  toast('Account ဖွင့်ပြီ! 🎉','s');
+}
+
+function quickLogin(type) {
+  if (type === 'demo') {
+    S.user = { name: 'မသန်းပန်းဝင်း', email: 'demo@mmaihub.com' };
+    S.isPro = false; S.isAdmin = false;
+    goTo('dash');
+    toast('Demo login ဝင်ပြီ 🎯','s');
+  } else {
+    S.user = { name: 'Admin', email: 'admin@mmaihub.com' };
+    S.isPro = true; S.isAdmin = true;
+    goTo('admin');
+    toast('Admin login ဝင်ပြီ 🔧','s');
+  }
+}
+
+function logout() {
+  S.user = null; S.isPro = false; S.isAdmin = false;
+  goTo('home');
+  toast('Logout ထွက်ပြီ','w');
+}
+
+// DASHBOARD
+function updateDash() {
+  if (!S.user) { goTo('home'); return; }
+  const el = id => document.getElementById(id);
+  if(el('sbAv')) el('sbAv').textContent = S.user.name[0] || 'U';
+  if(el('sbName')) el('sbName').textContent = S.user.name;
+  if(el('sbRole')) el('sbRole').textContent = S.isPro ? '⭐ Pro' : 'Free';
+  if(el('dGreet')) el('dGreet').textContent = 'မင်္ဂလာပါ ' + S.user.name + ' 👋';
+  if(el('dDate')) el('dDate').textContent = fmtDate();
+  if(el('memStat')) el('memStat').textContent = S.isPro ? '⭐ Pro' : 'Free';
+  if(el('upgradeBtn')) { el('upgradeBtn').disabled = S.isPro; el('upgradeBtn').textContent = S.isPro ? '⭐ Pro Active' : '⭐ Pro — 9,900 MMK'; }
+  if(el('sName')) el('sName').value = S.user.name;
+  if(el('sEmail')) el('sEmail').value = S.user.email;
+  showDS('overview');
+}
+
+function showDS(id, el) {
+  document.querySelectorAll('[id^="ds-"]').forEach(e => e.style.display = 'none');
+  const target = document.getElementById('ds-' + id);
+  if (target) target.style.display = 'block';
+  document.querySelectorAll('.sb-a').forEach(a => a.classList.remove('on'));
+  if (el) el.classList.add('on');
+}
+
+// ADMIN
+function showAS(id, el) {
+  ['aov','ausers','arev','acontent','asettings'].forEach(x => { const e = document.getElementById(x); if(e) e.style.display = 'none'; });
+  const t = document.getElementById(id);
+  if(t) t.style.display = 'block';
+  document.querySelectorAll('#page-admin .sb-a').forEach(a => a.classList.remove('on'));
+  if(el) el.classList.add('on');
+}
+
+// PAYMENT
+function selPay(el) { document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('sel')); el.classList.add('sel'); }
+function doPayment() {
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Processing...';
+  setTimeout(() => {
+    closeModal('payModal');
+    S.isPro = true;
+    btn.disabled = false; btn.innerHTML = '💳 ငွေပေးချေမည် — 9,900 MMK';
+    toast('🎉 Pro Member ဖြစ်ပြီ!','s');
+    if(S.user) updateDash();
+  }, 2200);
+}
+
+// AI
+async function callAI(prompt) {
+  if (!GEMINI_KEY || GEMINI_KEY === 'YOUR_GEMINI_KEY_HERE') return null;
+  try {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_KEY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const d = await res.json();
+    return d.candidates?.[0]?.content?.parts?.[0]?.text || null;
+  } catch(e) { return null; }
+}
+
+function setOut(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '';
+  el.style.whiteSpace = 'pre-wrap';
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i < text.length) { el.appendChild(document.createTextNode(text[i])); i++; }
+    else clearInterval(iv);
+  }, 6);
+}
+
+async function runPrompt() {
+  const idea = document.getElementById('pIdea').value;
+  if (!idea.trim()) { toast('Idea ထည့်ပါ','e'); return; }
+  const btn = document.getElementById('promptBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> AI generating...';
+  const platform = document.getElementById('pPlatform').value;
+  const purpose = document.getElementById('pPurpose').value;
+  const tone = document.getElementById('pTone').value;
+  const systemInstruction = `You are an expert AI prompt engineer specializing in Myanmar market content.
+Create a highly detailed, professional prompt for ${platform}.
+The user wants to use AI for: ${purpose}
+Their idea: ${idea}
+Required tone: ${tone}
+
+Write the optimized prompt in this format:
+---SYSTEM PROMPT---
+[Write the system/role instruction here]
+
+---USER PROMPT---  
+[Write the detailed user prompt here]
+
+---OUTPUT FORMAT---
+[Specify exactly what format the AI should respond in]
+
+---MYANMAR CONTEXT TIPS---
+[2-3 tips specific to Myanmar audience and culture]
+---`;
+  const result = await callAI(systemInstruction);
+  btn.disabled = false; btn.innerHTML = '✨ Generate မည်';
+  if (result) { setOut('pOut', result); toast('✨ Real AI Prompt!','s'); }
+  else {
+    setOut('pOut', '**Optimized Prompt for ' + platform + '**\n\n---\nSystem: Expert ' + purpose + ' specialist. Tone: ' + tone + '.\n\nUser: ' + idea + '\n\nRequirements:\n• Myanmar audience focused\n• Cultural hooks included\n• Clear call-to-action\n• 3 headline variations\n---\n\n💡 ဒီ prompt ကို ChatGPT/Claude မှာ paste ပါ');
+    toast('✨ Demo mode (key ထည့်ရင် real AI)','w');
+  }
+}
+
+async function runRecap() {
+  const title = document.getElementById('rTitle').value;
+  if (!title.trim()) { toast('Movie title ထည့်ပါ','e'); return; }
+  const btn = document.getElementById('recapBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> AI writing...';
+  const genre = document.getElementById('rGenre').value;
+  const style = document.getElementById('rStyle').value;
+  const notes = document.getElementById('rNotes').value;
+  const recapPrompt = `သင်သည် မြန်မာ content writer တစ်ဦးဖြစ်သည်။ Myanmar Facebook နှင့် TikTok audience အတွက် ရုပ်ရှင် recap ရေးပေးပါ။
+
+ရုပ်ရှင်အမည်: ${title}
+Genre: ${genre}  
+Style: ${style}
+Extra notes: ${notes || 'မရှိ'}
+
+မြန်မာဘာသာဖြင့် ရေးပေးပါ။ Format:
+🎬 [ရုပ်ရှင်အမည်] — မြန်မာ Recap
+
+[Hook sentence - emotional ဖြစ်ရမည်]
+
+[Main story - 3-4 paragraphs, key plot points]
+
+[Why watch this movie - Myanmar perspective]
+
+⭐ Rating: [X/10]
+[3-5 relevant hashtags in Myanmar and English]
+
+Important: Spoiler မပါစေနှင့် (ending မပေါ်စေနှင့်) unless notes မှာ ပါရင်သာ`;
+  const result = await callAI(recapPrompt);
+  btn.disabled = false; btn.innerHTML = '🎬 Generate မည်';
+  if (result) { setOut('rOut', result); toast('🎬 Real AI Recap!','s'); }
+  else {
+    const demos = { 'Interstellar': '🎬 **INTERSTELLAR — မြန်မာ Recap**\n\n"ဒီကမ္ဘာကြီး ငါတို့ကို မလိုတော့ဘူး..."\n\nပြောင်းလဲနေတဲ့ ရာသီဥတုကြောင့် Cooper ဆိုတဲ့ NASA pilot တစ်ယောက် သူ့သမီး Murph ကို ချန်ထားပြီး galaxy တစ်ဘက် ထွက်ခွာရတယ်...\n\nTime dilation ကြောင့် ကမ္ဘာမှာ သူ့သမီး ကြီးပြင်းနေချိန် space မှာ သူ နှစ်အနည်းငယ်ပဲ ကြာတယ်...\n\nဒါဟာ Science story မဟုတ် — ဖခင်နဲ့ သမီးရဲ့ love story ပါ\n\n⭐ 10/10 #Interstellar #MovieRecap #မြန်မာMovie' };
+    setOut('rOut', demos[title] || '🎬 **' + title + ' — မြန်မာ Recap**\n\n' + title + ' ဟာ ' + genre + ' genre မှ must-watch ဖြစ်တယ်\n\nEmotional journey, great performances, unforgettable ending\n\n⭐ Highly recommended!\n#' + title.replace(/\s/g,'') + ' #MovieRecap #မြန်မာMovie');
+    toast('🎬 Demo mode','w');
+  }
+}
+
+async function runSocial() {
+  const biz = document.getElementById('sBiz').value;
+  if (!biz.trim()) { toast('Business type ထည့်ပါ','e'); return; }
+  const aud = document.getElementById('sAud').value;
+  const plat = document.getElementById('sPlatform').value;
+  const socialPrompt = `သင်သည် Myanmar social media marketing expert တစ်ဦးဖြစ်သည်။
+
+Business: ${biz}
+Target Audience: ${aud}
+Platform: ${plat}
+
+အောက်ပါ format ဖြင့် 30-day content strategy ရေးပေးပါ:
+
+📅 WEEK 1 — Brand Awareness
+Monday: [Post idea မြန်မာဘာသာ] 
+Caption: [Myanmar caption]
+Wednesday: [Post idea]
+Caption: [Caption]
+Friday: [Post idea]
+Caption: [Caption]
+
+📅 WEEK 2 — Engagement
+[Same format]
+
+📅 WEEK 3 — Conversion  
+[Same format]
+
+📅 WEEK 4 — Retention
+[Same format]
+
+⏰ Best Posting Times (Myanmar):
+- နံနက် ၇-၉ နာရီ
+- နေ့လည် ၁၂-၁ နာရီ  
+- ညနေ ၇-၉ နာရီ
+
+#️⃣ Hashtag Strategy:
+[10 relevant hashtags]
+
+💡 Special Tips for Myanmar Market:
+[3 actionable tips]`;
+  const result = await callAI(socialPrompt);
+  if (result) { setOut('sOut', result); toast('📱 Real AI Strategy!','s'); }
+  else { setOut('sOut', '📱 **' + biz + ' — 30-Day Strategy**\n\nWeek 1: Brand Awareness\nMon: Behind-the-scenes post\nWed: Educational tip\nFri: Customer testimonial\nSun: Weekend special offer\n\nBest Times: 7-9AM, 12-1PM, 7-9PM\n\nHashtags: #Myanmar #မြန်မာ #' + biz.replace(/\s/g,'')); toast('📱 Demo mode','w'); }
+}
+
+function fillEx(ex) {
+  const exs = { 'Restaurant Ad': 'မြန်မာ မိသားစု restaurant FB ad — authentic taste emphasize', 'Travel Blog': 'Inle Lake travel blog — nature photography', 'Product': 'Thanaka face powder modern packaging international market' };
+  const el = document.getElementById('pIdea');
+  if(el) el.value = exs[ex] || ex;
+}
+
+function openLesson(title, desc) {
+  const t = document.getElementById('lessonTitle');
+  const d = document.getElementById('lessonDesc');
+  if(t) t.textContent = title;
+  if(d) d.textContent = desc;
+  openModal('lessonModal');
+}
+
+function filterLearn(el, cat) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.learn-card').forEach(c => {
+    c.style.display = (cat === 'all' || c.dataset.cat === cat) ? 'block' : 'none';
+  });
+}
+
+function copyOut(id) {
+  const el = document.getElementById(id);
+  const text = el ? el.innerText : '';
+  if (!text || text.includes('Generate နှိပ်ပါ')) { toast('Generate ဦးလုပ်ပါ','e'); return; }
+  navigator.clipboard.writeText(text).then(() => toast('📋 Copied!','s')).catch(() => toast('Copy failed','e'));
+}
+
+// MODAL
+function openModal(id) { const el = document.getElementById(id); if(el) el.classList.add('open'); }
+function closeModal(id) { const el = document.getElementById(id); if(el) el.classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(bg => bg.addEventListener('click', e => { if(e.target===bg) bg.classList.remove('open'); }));
+
+// TOAST
+function toast(msg, type='') {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  const icons = {s:'✅',e:'❌',w:'⚠️'};
+  t.className = 'toast ' + type;
+  t.innerHTML = '<span>' + (icons[type]||'💬') + '</span><span>' + msg + '</span>';
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(110%)'; t.style.transition='.3s'; setTimeout(()=>t.remove(),300); }, 3500);
+}
+
+function fmtDate() { return new Date().toLocaleDateString('my-MM',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+
+// INIT — Demo button
+document.addEventListener('DOMContentLoaded', () => {
+  const demoBtn = document.getElementById('demoBtn');
+  if (demoBtn) {
+    demoBtn.addEventListener('click', () => quickLogin('demo'));
+  }
+});
+</script>
+</body>
+</html>
